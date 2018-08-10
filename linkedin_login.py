@@ -22,7 +22,18 @@ driver.find_element_by_css_selector("input[name='session_password']").send_keys(
 driver.find_element_by_css_selector("input#login-submit").click()
 
 
-driver.get("https://www.linkedin.com/")
-print(driver.page_source)
+driver.get("https://www.linkedin.com/mynetwork/invite-connect/connections/")
 
+js="var q=document.documentElement.scrollTop=100000"  
+driver.execute_script(js)
+js="var q=document.documentElement.scrollTop=100000"  
+driver.execute_script(js)
+
+element_list = driver.find_elements_by_class_name("mn-connection-card__link")
+print(element_list)
+result = []
+for element in element_list:
+    target = element.get_attribute("href")
+    print (target)
+    result.append(target)
 

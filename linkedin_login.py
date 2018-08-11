@@ -24,16 +24,20 @@ driver.find_element_by_css_selector("input#login-submit").click()
 
 driver.get("https://www.linkedin.com/mynetwork/invite-connect/connections/")
 
-js="var q=document.documentElement.scrollTop=100000"  
-driver.execute_script(js)
-js="var q=document.documentElement.scrollTop=100000"  
-driver.execute_script(js)
+js="var q=document.documentElement.scrollTop=100000"    
+element_list = []
+while len(element_list) < 6600:
+    driver.execute_script(js)
+    time.sleep(3)
+    element_list = driver.find_elements_by_class_name("mn-connection-card__link")
+    print ("Total " + len(element_list))
 
-element_list = driver.find_elements_by_class_name("mn-connection-card__link")
-print(element_list)
 result = []
 for element in element_list:
     target = element.get_attribute("href")
     print (target)
     result.append(target)
+
+with open("result.json", "w") as fp:
+    fp.write(json.dumps(result))                            
 

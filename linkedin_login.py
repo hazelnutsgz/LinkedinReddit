@@ -24,13 +24,16 @@ driver.find_element_by_css_selector("input#login-submit").click()
 
 driver.get("https://www.linkedin.com/mynetwork/invite-connect/connections/")
 
-js="var q=document.documentElement.scrollTop=100000"    
+js="var q=document.documentElement.scrollTop="    
 element_list = []
+distance = 10000
+offset = 10000
 while len(element_list) < 6600:
-    driver.execute_script(js)
+    driver.execute_script(js + str(distance))
+    distance += offset
     time.sleep(3)
     element_list = driver.find_elements_by_class_name("mn-connection-card__link")
-    print ("Total " + len(element_list))
+    print ("Total " + str(len(element_list)))
 
 result = []
 for element in element_list:

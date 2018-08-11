@@ -21,26 +21,33 @@ driver.find_element_by_css_selector("input[name='session_password']").clear()
 driver.find_element_by_css_selector("input[name='session_password']").send_keys("#abcdefgh")
 driver.find_element_by_css_selector("input#login-submit").click()
 
+verification = input("Enter verification: ")
+driver.find_element_by_class_name("PinVerificationForm_pinParam").send_keys(verification)
+time.sleep(10)
+
+with open("test.html", 'w') as fp:
+    fp.write(driver.page_source)
 
 driver.get("https://www.linkedin.com/mynetwork/invite-connect/connections/")
 
-js="var q=document.documentElement.scrollTop="    
-element_list = []
-distance = 10000
-offset = 10000
-while len(element_list) < 6600:
-    driver.execute_script(js + str(distance))
-    distance += offset
-    time.sleep(3)
-    element_list = driver.find_elements_by_class_name("mn-connection-card__link")
-    print ("Total " + str(len(element_list)))
-
+# js="var q=document.documentElement.scrollTop="    
+# distance = 10000
+# offset = 10000 
 result = []
-for element in element_list:
-    target = element.get_attribute("href")
-    print (target)
-    result.append(target)
+counter = 0
+while True:
+    counter += 1
+    try:
+        driver.find_element_by_class_name("next").click()
+    except:
+        break
+    element_list = driver.find_elements_by_class_name("search-result__result-link")
+    for item in element_list:
+        result.append(item.get_attribute("href"))
+    if counter % 10 == 0:
+        print (result)
+        with open("result.json", "w") as fp:
+            fp.write(json.dumps(result)) 
 
-with open("result.json", "w") as fp:
-    fp.write(json.dumps(result))                            
+                           
 

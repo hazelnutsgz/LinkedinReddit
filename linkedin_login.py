@@ -66,8 +66,8 @@ offset = 10000
 result = []
 batch = 10
 while len(result) < 7000:
-    for i in range(1, batch):
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+    
     element_list = driver.find_elements_by_class_name("mn-connection-card__link")
     result = []
     for item in element_list:

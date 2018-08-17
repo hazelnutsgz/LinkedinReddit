@@ -43,34 +43,39 @@ driver = webdriver.Chrome(chrome_options=chrome_options)
 # except:
 #     print ("Wrong about saving cookies")
 
+# print ("Successfully saving the cookies")
 
+import pickle
 
+driver.get("https://www.linkedin.com")
+cookies = pickle.load(open("cookies.pkl", "rb"))
+for cookie in cookies:
+    driver.add_cookie(cookie)
+
+# driver.get("https://www.linkedin.com/mynetwork/invite-connect/connections/")
+driver.get("https://www.linkedin.com/mynetwork/invite-connect/connections/")
 with open("test.html", 'w') as fp:
     fp.write(driver.page_source)
 
-driver.get("https://www.linkedin.com/mynetwork/invite-connect/connections/")
 
-# js="var q=document.documentElement.scrollTop="    
-# distance = 10000
-# offset = 10000 
+
+js = "window.scrollTo(0, document.body.scrollHeight)"
+distance = 10000
+offset = 10000 
+
 result = []
-counter = 0
-while True:
-    counter += 1
-    element_list = driver.find_elements_by_class_name("search-result__result-link")
+batch = 10
+while len(result) < 7000:
+    for i in range(1, batch):
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+    element_list = driver.find_elements_by_class_name("mn-connection-card__link")
+    result = []
     for item in element_list:
         result.append(item.get_attribute("href"))
     
-    print (result)
-    if counter % 10 == 0:
-        with open("result.json", "w") as fp:
-            fp.write(json.dumps(result)) 
-
-    try:
-        driver.find_element_by_class_name("next").click()
-    except:
-        print ("Wrong with click")
-        break
+    print("Current length is " + str(len(result)))
+    with open("result.json", "w") as fp:
+        fp.write(json.dumps(result)) 
 
                            
 

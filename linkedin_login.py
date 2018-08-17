@@ -14,36 +14,36 @@ chrome_options.add_argument('--disable-gpu')
 
 driver = webdriver.Chrome(chrome_options=chrome_options)
 
-# driver.get("https://www.linkedin.com/") 
-# driver.find_element_by_css_selector("input[name='session_key']").clear()
-# driver.find_element_by_css_selector("input[name='session_key']").send_keys("m15201752137@163.com")
-# driver.find_element_by_css_selector("input[name='session_password']").clear()
-# driver.find_element_by_css_selector("input[name='session_password']").send_keys("#abcdefgh")
-# driver.find_element_by_css_selector("input#login-submit").click()
+driver.get("https://www.linkedin.com/") 
+driver.find_element_by_css_selector("input[name='session_key']").clear()
+driver.find_element_by_css_selector("input[name='session_key']").send_keys("m15201752137@163.com")
+driver.find_element_by_css_selector("input[name='session_password']").clear()
+driver.find_element_by_css_selector("input[name='session_password']").send_keys("#abcdefgh")
+driver.find_element_by_css_selector("input#login-submit").click()
 
-# time.sleep(10)
-# verification = input("Enter verification: ")
-# s = None
-# while not s:
-#     try:
-#         s = driver.find_element_by_id("verification-code")
-#     except:
-#         print ("Not ready yet")
-#         continue
+time.sleep(10)
+verification = input("Enter verification: ")
+s = None
+while not s:
+    try:
+        s = driver.find_element_by_id("verification-code")
+    except:
+        print ("Not ready yet")
+        continue
 
-# s.send_keys(verification)
-# driver.find_element_by_name("signin").click()
+s.send_keys(verification)
+driver.find_element_by_name("signin").click()
 
-# time.sleep(10)
+time.sleep(10)
 
-# import pickle
+import pickle
 
-# try:
-#     pickle.dump(driver.get_cookies() , open("cookies.pkl","wb"))
-# except:
-#     print ("Wrong about saving cookies")
+try:
+    pickle.dump(driver.get_cookies() , open("cookies.pkl","wb"))
+except:
+    print ("Wrong about saving cookies")
 
-# print ("Successfully saving the cookies")
+print ("Successfully saving the cookies")
 
 import pickle
 
@@ -59,23 +59,23 @@ with open("test.html", 'w') as fp:
 
 
 
-js = "window.scrollTo(0, document.body.scrollHeight)"
-distance = 10000
-offset = 10000 
+# js = "window.scrollTo(0, document.body.scrollHeight)"
+# distance = 10000
+# offset = 10000 
 
-result = []
-batch = 10
-while len(result) < 7000:
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+# result = []
+# batch = 10
+# while len(result) < 7000:
+#     driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+
+#     element_list = driver.find_elements_by_class_name("mn-connection-card__link")
+#     result = []
+#     for item in element_list:
+#         result.append(item.get_attribute("href"))
     
-    element_list = driver.find_elements_by_class_name("mn-connection-card__link")
-    result = []
-    for item in element_list:
-        result.append(item.get_attribute("href"))
-    
-    print("Current length is " + str(len(result)))
-    with open("result.json", "w") as fp:
-        fp.write(json.dumps(result)) 
+#     print("Current length is " + str(len(result)))
+#     with open("result.json", "w") as fp:
+#         fp.write(json.dumps(result)) 
 
                            
 

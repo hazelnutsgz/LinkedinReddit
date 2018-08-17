@@ -34,7 +34,13 @@ def extract_information(driver, url):
     ret = {}
     js = "window.scrollTo(0, document.body.scrollHeight)"
     driver.execute_script(js)
-    
+    timeout = 10
+    try:
+        element_present = EC.presence_of_element_located((By.CLASS_NAME, 'background-details'))
+        WebDriverWait(driver, timeout).until(element_present)
+    except:
+        print ("Timed out waiting for page to load")
+
     with open("test.html", 'w') as fp:
         fp.write(driver.page_source)
     

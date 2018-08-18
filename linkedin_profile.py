@@ -13,8 +13,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 chrome_options = Options()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--disable-gpu')
+# chrome_options.add_argument('--headless')
+# chrome_options.add_argument('--disable-gpu')
 
 driver = webdriver.Chrome(chrome_options=chrome_options)
 
@@ -22,9 +22,13 @@ driver = webdriver.Chrome(chrome_options=chrome_options)
 
 import pickle
 import json
+
+import re
+
 url = "https://www.linkedin.com/in/neema-mashayekhi-b5936129/"
 
 driver.get("https://www.linkedin.com")
+
 cookies = pickle.load(open("cookies.pkl", "rb"))
 for cookie in cookies:
     driver.add_cookie(cookie)
@@ -41,23 +45,48 @@ def extract_information(driver, url):
     except:
         print ("Timed out waiting for page to load")
 
-    with open("test.html", 'w') as fp:
+    pattern = re.compile(r'/([a-zA-Z0-9-]+)')
+    name = pattern.findall(url)[-1]
+    with open(name + ".html", 'w') as fp:
         fp.write(driver.page_source)
     
 
-    education_list = driver.find_element_by_css_selector("section#education-section")
-    print(education_list)
-    education_infos = []
-    for education_item in education_list:
-        education_info = {}
-        education_info["school_name"] = education_item.find_element_by_class_name("pv-entity__school-name").text()
-        education_info["school_url"]
-        education_info["degree"] = education_item.find_element_by_css_selector("#pv-entity__degree-name > #pv-entity__comma-item").text()
-        education_info["major"] =  education_item.find_element_by_css_selector("#pv-entity__fos > #pv-entity__comma-item")
-        time = education_item.find_element_by_css_selector("pv-entity__dates > time")
-        import pdb; pdb.set_trace()
+    # education_list = driver.find_elements_by_css_selector("section#education-section li")
+    # education_infos = []
+    # for education_item in education_list:
+    #     education_info = {}
+    #     education_info["school_name"] = education_item.find_element_by_class_name("pv-entity__school-name").text
+    #     education_info["degree"] = education_item.find_element_by_class_name("pv-entity__degree-name").find_element_by_class_name("pv-entity__comma-item").text
+    #     education_info["major"] =  education_item.find_element_by_class_name("pv-entity__fos").find_element_by_class_name("pv-entity__comma-item").text
+    #     times = education_item.find_element_by_class_name("pv-entity__dates").find_elements_by_tag_name("time")
+    #     education_info["start"] = times[0].text
+    #     education_info["end"] = times[1].text
 
-    ret["education"] = education_infos
+    #     education_infos.append(education_info)
+    # ret["education"] = education_infos
+
+    work_infos = []
+    work_list = driver.find_element_by_id("experience-section").find_elements_by_class_name("pv-position-entity")
+    import pdb; pdb.set_trace()
+    for work_item in work_list:
+        try:
+            different_positions = work_item.find_element_by_tag_name("ul").find_elements_by_tag_name("li")
+            for position in different_positions:
+                work_info = {}
+                work_info["title"] = work_item.find_element_by_class_name("pv-entity__company-summary-info").find_elements_by_tag_name("h3").find_elements_by_tag_name("span").text
+                work_info["company"] = position.find_element_by_class_name("pv-entity__summary-info").find_elements_by_class_name("pv-entity__secondary-title").text
+                work_info["duration"] = position.find_element_by_class_name("pv-entity__date-range").find_elements_by_tag_name("span")[1].text
+                work_infos.append(work_info)
+        except:
+            work_info = {}
+            ##Single position in one company
+            work_info["title"] = work_item.find_element_by_class_name("pv-entity__summary-info").find_elements_by_tag_name("h3").text
+            work_info["company"] = work_item.find_element_by_class_name("pv-entity__summary-info").find_elements_by_class_name("pv-entity__secondary-title").text
+            work_info["duration"] = work_item.find_element_by_class_name("pv-entity__date-range").find_elements_by_tag_name("span")[1].text 
+            print (work_info)
+            work_infos.append(work_info)
+    ret["work"] = work_infos
+
     return ret
 
 extract_information(driver, url)

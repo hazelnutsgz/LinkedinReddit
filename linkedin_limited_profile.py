@@ -16,27 +16,32 @@ chrome_options = Options()
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--disable-gpu')
 
-driver = webdriver.Chrome(chrome_options=chrome_options)
-
+# driver = webdriver.Chrome(chrome_options=chrome_options)
+driver = webdriver.Firefox()
 
 
 import pickle
 import json
 url = "https://www.linkedin.com/in/neema-mashayekhi-b5936129/"
 
-
+driver.get("https://www.linkedin.com")
+cookies = pickle.load(open("cookies.pkl", "rb"))
+for cookie in cookies:
+    driver.add_cookie(cookie)
+driver.implicitly_wait(100)
 def extract_information(driver, url):
     driver.get(url)
     ret = {}
+    js = "window.scrollTo(0, document.body.scrollHeight)"
+    driver.execute_script(js)
+    timeout = 15
+    try:
+        element_present = EC.presence_of_element_located((By.CLASS_NAME, 'background-details'))
+        WebDriverWait(driver, timeout).until(element_present)
+    except:
+        print ("Timed out waiting for page to load")
 
     with open("test.html", 'w') as fp:
         fp.write(driver.page_source)
-        
-    ret["name"] = driver.find_element_by_css_selector("#profile-overview-content h1").text()
-    ret["connections"] = driver.find_element_by_css_selector("#member-connections strong").text()
-    ret["positions"] = []
-    s = driver.find_element_by_css_selector("ul#positions") 
-    print(s)
 
-if __name__ == '__main__':
-    extract_information(driver, url)
+extract_information(driver, url)

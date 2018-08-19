@@ -15,6 +15,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import pickle
 import json
 
+from login.linkedin_login import get_driver
+
 import re
 
 example_url = "https://www.linkedin.com/in/neema-mashayekhi-b5936129/"
@@ -92,14 +94,10 @@ def extract_information(filename):
 
     return ret
 
-def scrape_information(url):
-    chrome_options = Options()
-    # chrome_options.add_argument('--headless')
-    # chrome_options.add_argument('--disable-gpu')
-
-    driver = webdriver.Chrome(chrome_options=chrome_options)
+def scrape_information(driver, url):
     name = download_information(driver, url)
     extract_information(name)
 
 if __name__ == '__main__':
-    scrape_information(example_url)
+    driver = get_driver()
+    scrape_information(driver, example_url)

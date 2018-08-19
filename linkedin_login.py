@@ -6,11 +6,13 @@ from lxml import etree
 from bs4 import BeautifulSoup
 
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
 chrome_options = Options()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--disable-gpu')
 
 driver = webdriver.Chrome(chrome_options=chrome_options)
 
@@ -31,10 +33,14 @@ while not s:
         print ("Not ready yet")
         continue
 
-s.send_keys(verification)
-driver.find_element_by_name("signin").click()
+try:
+    s.send_keys(verification)
+    driver.find_element_by_name("signin").click()
+except:
+    pass
 
-time.sleep(10)
+
+
 
 import pickle
 

@@ -70,18 +70,20 @@ def extract_information(driver, url):
     import pdb; pdb.set_trace()
     for work_item in work_list:
         try:
-            different_positions = work_item.find_element_by_tag_name("ul").find_elements_by_tag_name("li")
+            temp = work_item.find_element_by_tag_name("ul")
+            different_positions = temp.find_elements_by_tag_name("li")
+            company = work_item.find_element_by_class_name("pv-entity__company-summary-info").find_element_by_tag_name("h3").find_elements_by_tag_name("span")[1].text
             for position in different_positions:
                 work_info = {}
-                work_info["title"] = work_item.find_element_by_class_name("pv-entity__company-summary-info").find_elements_by_tag_name("h3").find_elements_by_tag_name("span").text
-                work_info["company"] = position.find_element_by_class_name("pv-entity__summary-info").find_elements_by_class_name("pv-entity__secondary-title").text
+                work_info["company"] = company
+                work_info["title"] = position.find_element_by_class_name("pv-entity__summary-info").find_elements_by_tag_name("span")[1].text
                 work_info["duration"] = position.find_element_by_class_name("pv-entity__date-range").find_elements_by_tag_name("span")[1].text
                 work_infos.append(work_info)
         except:
             work_info = {}
             ##Single position in one company
-            work_info["title"] = work_item.find_element_by_class_name("pv-entity__summary-info").find_elements_by_tag_name("h3").text
-            work_info["company"] = work_item.find_element_by_class_name("pv-entity__summary-info").find_elements_by_class_name("pv-entity__secondary-title").text
+            work_info["title"] = work_item.find_element_by_class_name("pv-entity__summary-info").find_element_by_tag_name("h3").text
+            work_info["company"] = work_item.find_element_by_class_name("pv-entity__secondary-title").text
             work_info["duration"] = work_item.find_element_by_class_name("pv-entity__date-range").find_elements_by_tag_name("span")[1].text 
             print (work_info)
             work_infos.append(work_info)

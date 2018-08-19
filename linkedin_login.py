@@ -23,24 +23,19 @@ driver.find_element_by_css_selector("input[name='session_password']").clear()
 driver.find_element_by_css_selector("input[name='session_password']").send_keys("#abcdefgh")
 driver.find_element_by_css_selector("input#login-submit").click()
 
-time.sleep(10)
-verification = input("Enter verification: ")
-s = None
-while not s:
-    try:
-        s = driver.find_element_by_id("verification-code")
-    except:
-        print ("Not ready yet")
-        continue
-
-try:
-    s.send_keys(verification)
-    driver.find_element_by_name("signin").click()
-except:
-    pass
+# time.sleep(10)
+# verification = input("Enter verification: ")
+# s = None
+# while not s:
+#     try:
+#         s = driver.find_element_by_id("verification-code")
+#     except:
+#         print ("Not ready yet")
+#         continue
 
 
-
+# s.send_keys(verification)
+# driver.find_element_by_name("signin").click()
 
 import pickle
 

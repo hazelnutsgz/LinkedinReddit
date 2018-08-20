@@ -6,6 +6,6 @@ The profiling script for a specific Linkedin profile url.
 
 # Todo
 a.Scraping all the connection within login status.</br>
-b.Explore and build the connection graph based on Selenium
+b.Exploring and building the connections based on Selenium.
 
 

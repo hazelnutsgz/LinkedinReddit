@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 from login.linkedin_login import get_driver
 from parse.linkedin_profile import scrape_information
 

@@ -1,4 +1,4 @@
-# Linkedin-Reddit
+# LinkedIn-Reddit
 This repo contains the scraping scripts for Linkedin and Reddit. 
 
 # Done

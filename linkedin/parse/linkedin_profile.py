@@ -15,7 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import pickle
 import json
 
-from login.linkedin_login import get_driver
+# from .. login.linkedin_login import get_driver
 
 import re
 
@@ -46,7 +46,7 @@ def download_information(driver, url):
         fp.write(driver.page_source)
     return name
     
-def extract_information(filename):
+def extract_information(filename, outputfile):
     ret = {}
     with open(filename, 'r') as fp:
         target = etree.HTML(fp.read())
@@ -55,24 +55,53 @@ def extract_information(filename):
     education_infos = []
     for education_item in education_list:
         education_info = {}
-        education_info["school_name"] = education_item.cssselect(".pv-entity__school-name")[0].text
-        education_info["degree"] = education_item.cssselect(".pv-entity__degree-name")[0].cssselect(".pv-entity__comma-item")[0].text
-        education_info["major"] =  education_item.cssselect(".pv-entity__fos")[0].cssselect(".pv-entity__comma-item")[0].text
-        times = education_item.cssselect(".pv-entity__dates")[0].cssselect("time")
-        education_info["start"] = times[0].text
-        education_info["end"] = times[1].text
-
+        try:
+            education_info["school_name"] = education_item.cssselect(".pv-entity__school-name")[0].text
+        except:
+            pass
+        try:
+            education_info["degree"] = education_item.cssselect(".pv-entity__degree-name")[0].cssselect(".pv-entity__comma-item")[0].text
+        except:
+            pass
+        try:
+            education_info["major"] =  education_item.cssselect(".pv-entity__fos")[0].cssselect(".pv-entity__comma-item")[0].text
+        except:
+            pass
+        try:
+            times = education_item.cssselect(".pv-entity__dates")[0].cssselect("time")
+        except:
+            pass
+        try:
+            education_info["start"] = times[0].text
+        except:
+            pass
+        try:
+            education_info["end"] = times[1].text
+        except:
+            pass
         education_infos.append(education_info)
 
     ret["education"] = education_infos
     import pdb; pdb.set_trace()
     work_infos = []
-    work_list = target.cssselect("#experience-section")[0].cssselect(".pv-position-entity")
+    different_positions = None
+    work_list = None
+    try:
+        work_list = target.cssselect("#experience-section")[0].cssselect(".pv-position-entity")
+    except:
+        pass
+
     for work_item in work_list:
         try:
-            different_positions = work_item.cssselect("ul")[0].cssselect("li")
-            company = work_item.cssselect(".pv-entity__company-summary-info")[0].cssselect("h3")[0].cssselect("span")[1].text
-            
+            try:
+                different_positions = work_item.cssselect("ul")[0].cssselect("li")
+            except:
+                pass
+            try:
+                company = work_item.cssselect(".pv-entity__company-summary-info")[0].cssselect("h3")[0].cssselect("span")[1].text
+            except:
+                pass
+
             for position in different_positions:
                 work_info = {}
                 work_info["company"] = company
@@ -83,13 +112,23 @@ def extract_information(filename):
             work_info = {}
             ##Single position in one company
             import pdb; pdb.set_trace()
-            work_info["title"] = work_item.cssselect(".pv-entity__summary-info")[0].cssselect("h3")[0].text
-            work_info["company"] = work_item.cssselect(".pv-entity__secondary-title")[0].text
-            work_info["duration"] = work_item.cssselect(".pv-entity__date-range")[0].cssselect("span")[1].text 
+            try:
+                work_info["title"] = work_item.cssselect(".pv-entity__summary-info")[0].cssselect("h3")[0].text
+            except:
+                pass
+            try:
+                work_info["company"] = work_item.cssselect(".pv-entity__secondary-title")[0].text
+            except:
+                pass
+            try:
+                work_info["duration"] = work_item.cssselect(".pv-entity__date-range")[0].cssselect("span")[1].text 
+            except:
+                pass
             print (work_info)
             work_infos.append(work_info)
+
     ret["work"] = work_infos
-    with open(filename + ".json", 'w') as fp:
+    with open(outputfile, 'w') as fp:
         fp.write(json.dumps(ret))
 
     return ret
@@ -99,5 +138,8 @@ def scrape_information(driver, url):
     extract_information(name)
 
 if __name__ == '__main__':
-    driver = get_driver()
-    scrape_information(driver, example_url)
+    # driver = get_driver()
+    # scrape_information(driver, example_url)
+
+
+    extract_information("../html/bming.html", "tess.json")

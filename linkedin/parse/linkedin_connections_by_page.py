@@ -12,15 +12,63 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
-chrome_options = Options()
+import sys
+import os
+parentdir=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ #把目录加入环境变量
+sys.path.insert(0,parentdir)
 
-driver = webdriver.Chrome(chrome_options=chrome_options)
+
+from login.linkedin_login import *
 
 
-driver.get("https://www.linkedin.com")
-cookies = pickle.load(open("cookies.pkl", "rb"))
-for cookie in cookies:
-    driver.add_cookie(cookie)
+driver = get_driver()
 
-for page in range():
-    driver.get("https://www.linkedin.com/search/results/people/?facetNetwork=%5B%22F%22%5D&origin=MEMBER_PROFILE_CANNED_SEARCH&page=" + str(page))
+driver.get("https://www.linkedin.com/mynetwork/invite-connect/connections/")
+
+with open("result.json", "r") as fp:
+    result = json.loads(fp.read())
+
+result_set = set(result)
+
+
+driver.find_element_by_css_selector("a[data-control-name='search_with_filters']").click()
+
+
+count = 0
+while True:
+	element_list = driver.find_elements_by_css_selector("a[data-control-name~='search_srp_result']")
+	print ("LLL")
+	print (element_list)
+	for item in element_list:
+	    target_url = item.get_attribute("href")
+	    if target_url not in result_set:
+	        print ("Add new the item")
+	        result_set.add(target_url)
+	    else:
+	    	print ("Duplicated")
+
+	result_list = list(result_set)
+	print("Current length is " + str(len(result_list)))
+
+	with open(str(count) + ".html", 'w') as fp:
+		fp.write(driver.page_source)
+	count += 1
+
+	driver.find_element_by_css_selector(".artdeco-pagination__button--next").click()
+	print ("click next........")
+	time.sleep(5)
+
+
+
+
+
+
+
+
+
+
+
+
+
+

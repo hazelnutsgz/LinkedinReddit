@@ -55,7 +55,7 @@ import pickle
 def get_driver():
     driver = initial()
     driver.get("https://www.linkedin.com")
-    cookies = pickle.load(open("cookies.pkl", "rb"))
+    cookies = pickle.load(open("../cookies/cookies.pkl", "rb"))
     for cookie in cookies:
         driver.add_cookie(cookie)
     driver.get("https://www.linkedin.com")  

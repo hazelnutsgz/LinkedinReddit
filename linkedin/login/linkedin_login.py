@@ -26,9 +26,15 @@ def login(driver):
     print ("Try to login..........")
     driver.get("https://www.linkedin.com/") 
     driver.find_element_by_css_selector("input[name='session_key']").clear()
-    driver.find_element_by_css_selector("input[name='session_key']").send_keys("m15201752137@163.com")
+    # driver.find_element_by_css_selector("input[name='session_key']").send_keys("m15201752137@163.com")
+    # driver.find_element_by_css_selector("input[name='session_password']").clear()
+    # driver.find_element_by_css_selector("input[name='session_password']").send_keys("#abcdefgh")
+    
+    driver.find_element_by_css_selector("input[name='session_key']").send_keys("hazelnutsgz@gmail.com")
     driver.find_element_by_css_selector("input[name='session_password']").clear()
-    driver.find_element_by_css_selector("input[name='session_password']").send_keys("#abcdefgh")
+    driver.find_element_by_css_selector("input[name='session_password']").send_keys("sheguozhen1996")
+
+
     driver.find_element_by_css_selector("input#login-submit").click()
 
     time.sleep(5)
@@ -65,6 +71,7 @@ def get_driver():
     driver.get("https://www.linkedin.com")  
     time.sleep(3)
     if driver.page_source.find("Guozhen She") == 0:
+        print ("Need login")
         return login(driver)
     
     with open("welcomepage.html", 'w') as fp:

@@ -7,7 +7,7 @@ sys.path.insert(0,parentdir)
 from login.linkedin_login import *
 
 
-driver = get_driver()
+driver = get_driver("hazelnutsgz@gmail.com", "sheguozhen1996")
 
 
 print ("driver got??")
@@ -37,9 +37,13 @@ for url in result:
 	driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
 	time.sleep(20)
 	
+	if os.path.exists("../html/" + trim_url + ".html") or\
+		os.path.exists("../html/unlogin/" + trim_url + ".html"):
+		print ("duplicated...")
+		continue
 
 	with open("../html/" + trim_url + ".html", 'w') as fp:
 		fp.write(driver.page_source)
 
-	time.sleep(60)
+	time.sleep(40)
 	

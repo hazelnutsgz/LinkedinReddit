@@ -22,7 +22,7 @@ def initial():
 
 
 
-def login(driver):
+def login(driver, username, passwd, cookie_file):
     print ("Try to login..........")
     driver.get("https://www.linkedin.com/") 
     driver.find_element_by_css_selector("input[name='session_key']").clear()
@@ -30,9 +30,9 @@ def login(driver):
     # driver.find_element_by_css_selector("input[name='session_password']").clear()
     # driver.find_element_by_css_selector("input[name='session_password']").send_keys("#abcdefgh")
     
-    driver.find_element_by_css_selector("input[name='session_key']").send_keys("hazelnutsgz@gmail.com")
+    driver.find_element_by_css_selector("input[name='session_key']").send_keys(username)
     driver.find_element_by_css_selector("input[name='session_password']").clear()
-    driver.find_element_by_css_selector("input[name='session_password']").send_keys("sheguozhen1996")
+    driver.find_element_by_css_selector("input[name='session_password']").send_keys(passwd)
 
 
     driver.find_element_by_css_selector("input#login-submit").click()
@@ -49,7 +49,7 @@ def login(driver):
         pass        
 
     try:
-        pickle.dump(driver.get_cookies() , open("cookies.pkl","wb"))
+        pickle.dump(driver.get_cookies() , open(cookie_file,"wb"))
     except:
         print ("Wrong about saving cookies")
 
@@ -58,21 +58,21 @@ def login(driver):
 
 
 
-def get_driver():
+def get_driver(username, passwd, cookie_file):
     driver = initial()
     driver.get("https://www.linkedin.com")
     try:
-        cookies = pickle.load(open("../cookies/cookies.pkl", "rb"))
+        cookies = pickle.load(open(cookie_file, "rb"))
         for cookie in cookies:
             driver.add_cookie(cookie)
     except:
-        return login(driver)
+        return login(driver, username, passwd, cookie_file)
 
     driver.get("https://www.linkedin.com")  
     time.sleep(3)
     if driver.page_source.find("Guozhen She") == 0:
         print ("Need login")
-        return login(driver)
+        return login(driver, username, passwd, cookie_file)
     
     with open("welcomepage.html", 'w') as fp:
         fp.write(driver.page_source)

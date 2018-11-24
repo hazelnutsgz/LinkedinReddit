@@ -7,7 +7,7 @@ sys.path.insert(0,parentdir)
 from login.linkedin_login import *
 
 
-driver = get_driver()
+driver = get_driver("+8613512382108", "197053")
 
 
 print ("driver got??")
@@ -27,8 +27,6 @@ for url in result:
 		print ("duplicated...")
 		continue
 
-	if count < 7000:
-		continue
 
 	driver.get(url)
 	time.sleep(5)
@@ -37,9 +35,13 @@ for url in result:
 	driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
 	time.sleep(20)
 	
+	if os.path.exists("../html/" + trim_url + ".html") or\
+		os.path.exists("../html/unlogin/" + trim_url + ".html"):
+		print ("duplicated...")
+		continue
 
 	with open("../html/" + trim_url + ".html", 'w') as fp:
 		fp.write(driver.page_source)
 
-	time.sleep(60)
+	time.sleep(40)
 	

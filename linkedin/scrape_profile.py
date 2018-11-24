@@ -37,7 +37,7 @@ def func():
 	    result = json.loads(fp.read())
 
 
-	time.sleep(30)		
+	time.sleep(10)		
 	count = 0
 	for (url, judge) in result:
 		trim_url = url.split('/')[-2]
@@ -52,6 +52,11 @@ def func():
 
 
 		driver.get(url)
+		if driver.page_source.find("Sign in to LinkedIn") != -1 or \
+			driver.page_source.find("Don't have an account?") != -1:
+			print("The account failed....")
+			return
+
 		for i in range(2):
 			time.sleep(20*random())
 			driver.execute_script("window.scrollTo(0, document.body.scrollHeight*0.5)")

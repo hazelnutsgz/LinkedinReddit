@@ -5,7 +5,7 @@ import requests
 from lxml import etree
 import lxml.cssselect
 from bs4 import BeautifulSoup
-
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -46,11 +46,14 @@ def download_information(driver, url):
         fp.write(driver.page_source)
     return name
     
-def extract_information(filename, outputfile):
+def extract_information(filename):
     ret = {}
     with open(filename, 'r') as fp:
         target = etree.HTML(fp.read())
-    ret["name"] = target.cssselect(".pv-top-card-section__name")[0].text
+    try:
+        ret["name"] = target.cssselect(".pv-top-card-section__name")[0].text
+    except:
+        ret["name"] = ''
     education_list = target.cssselect("section#education-section li")
     education_infos = []
     for education_item in education_list:
@@ -58,49 +61,49 @@ def extract_information(filename, outputfile):
         try:
             education_info["school_name"] = education_item.cssselect(".pv-entity__school-name")[0].text
         except:
-            pass
+            education_info["school_name"] = ""
         try:
             education_info["degree"] = education_item.cssselect(".pv-entity__degree-name")[0].cssselect(".pv-entity__comma-item")[0].text
         except:
-            pass
+            education_info["degree"] = ""
         try:
-            education_info["major"] =  education_item.cssselect(".pv-entity__fos")[0].cssselect(".pv-entity__comma-item")[0].text
+            education_info["major"] = education_item.cssselect(".pv-entity__fos")[0].cssselect(".pv-entity__comma-item")[0].text
         except:
-            pass
+            education_info["major"] = ""
         try:
             times = education_item.cssselect(".pv-entity__dates")[0].cssselect("time")
         except:
-            pass
+            times = []
         try:
             education_info["start"] = times[0].text
         except:
-            pass
+            education_info["start"] = ""
         try:
             education_info["end"] = times[1].text
         except:
-            pass
+            education_info["end"] = ""
         education_infos.append(education_info)
 
     ret["education"] = education_infos
-    import pdb; pdb.set_trace()
     work_infos = []
     different_positions = None
     work_list = None
+    import pdb; pdb.set_trace()
     try:
         work_list = target.cssselect("#experience-section")[0].cssselect(".pv-position-entity")
     except:
-        pass
+        work_list = []
 
     for work_item in work_list:
         try:
             try:
                 different_positions = work_item.cssselect("ul")[0].cssselect("li")
             except:
-                pass
+                different_positions = []
             try:
                 company = work_item.cssselect(".pv-entity__company-summary-info")[0].cssselect("h3")[0].cssselect("span")[1].text
             except:
-                pass
+                company = ""
 
             for position in different_positions:
                 work_info = {}
@@ -111,25 +114,22 @@ def extract_information(filename, outputfile):
         except:
             work_info = {}
             ##Single position in one company
-            import pdb; pdb.set_trace()
             try:
                 work_info["title"] = work_item.cssselect(".pv-entity__summary-info")[0].cssselect("h3")[0].text
             except:
-                pass
+                work_info["title"] = ""
             try:
                 work_info["company"] = work_item.cssselect(".pv-entity__secondary-title")[0].text
             except:
-                pass
+                work_info["company"] = ""
             try:
                 work_info["duration"] = work_item.cssselect(".pv-entity__date-range")[0].cssselect("span")[1].text 
             except:
-                pass
-            print (work_info)
+                work_info["duration"] = ""
             work_infos.append(work_info)
 
     ret["work"] = work_infos
-    with open(outputfile, 'w') as fp:
-        fp.write(json.dumps(ret))
+    print(ret)
 
     return ret
 
@@ -137,9 +137,39 @@ def scrape_information(driver, url):
     name = download_information(driver, url)
     extract_information(name)
 
+def parse_all_info(directory):
+    file_list = os.listdir(directory)
+    count = 0
+    error_list = []
+    success = 0; fail = 0;
+    ret = []
+    for file in file_list:
+        try:
+            item = extract_information(
+                os.path.join(directory, file))
+            ret.append(item)
+            success += 1
+        except:
+            error_list.append(file)
+            fail += 1
+        print(count)
+        count += 1
+
+    print("success:" + str(success))
+    print("fail:" + str(fail))
+
+    with open("error.log", 'w') as fp:
+        fp.write(json.dumps(error_list))
+
+    with open("parse.json", 'w') as fp:
+        fp.write(json.dumps(ret))
+
+
 if __name__ == '__main__':
     # driver = get_driver()
     # scrape_information(driver, example_url)
+    # parse_all_info("html")
+    extract_information(os.path.join("html", \
+                "%E5%A8%81-%E5%88%98-629940132.html"))
 
 
-    extract_information("../html/bming.html", "tess.json")

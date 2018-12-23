@@ -88,7 +88,7 @@ def extract_information(filename):
     work_infos = []
     different_positions = None
     work_list = None
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     try:
         work_list = target.cssselect("#experience-section")[0].cssselect(".pv-position-entity")
     except:
@@ -96,10 +96,9 @@ def extract_information(filename):
 
     for work_item in work_list:
         try:
-            try:
-                different_positions = work_item.cssselect("ul")[0].cssselect("li")
-            except:
-                different_positions = []
+            ##Multiple position in one company
+            
+            different_positions = work_item.cssselect("ul")[0].cssselect("li")
             try:
                 company = work_item.cssselect(".pv-entity__company-summary-info")[0].cssselect("h3")[0].cssselect("span")[1].text
             except:
@@ -129,6 +128,18 @@ def extract_information(filename):
             work_infos.append(work_info)
 
     ret["work"] = work_infos
+
+
+    if ret["name"] == '': 
+        # or (ret["education"] == [] and ret["work"] == []):
+        raise RuntimeError('NotFoundError')
+
+    if ret["education"] == []:
+        ret["education"] = target.cssselect(".pv-top-card-v2-section__school-name")[0].txt
+
+    if ret["work"] == []:
+        ret["work"] = targeg.cssselect(".pv-top-card-section__headline")[0].txt
+
     print(ret)
 
     return ret
@@ -168,8 +179,8 @@ def parse_all_info(directory):
 if __name__ == '__main__':
     # driver = get_driver()
     # scrape_information(driver, example_url)
-    # parse_all_info("html")
-    extract_information(os.path.join("html", \
-                "%E5%A8%81-%E5%88%98-629940132.html"))
+    parse_all_info("html")
+    # extract_information(os.path.join("html", \
+    #             "%E5%A8%81-%E5%88%98-629940132.html"))
 
 

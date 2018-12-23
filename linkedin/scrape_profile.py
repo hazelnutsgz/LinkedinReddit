@@ -101,7 +101,34 @@ def transfer():
 	with open("result_dict.json", "w") as fp:
 		fp.write(json.dumps(arr))
 
+def statistic():
+	dirs = os.listdir("html")
+	count = 0
+	lis = []
+	
+	for file in dirs:
+		with open(os.path.join("html", file), 'r') as fp:
+			try:
+				st = fp.read()
+			except:
+				count += 1
+				lis.append(file)
+				os.remove(os.path.join('html', file))
+				continue
+			if st.find("抱歉，该会员无法访问") != -1:
+				count += 1
+				lis.append(file)
+				os.remove(os.path.join('html', file))
+
+	with open("failed3_url.json",'w') as fp:
+		fp.write(json.dumps(lis))
+
+	print(count)
+
+
+
 if __name__ == '__main__':
+	# statistic()
 	func()
 	# clean()
 	# transfer()

@@ -133,13 +133,17 @@ def extract_information(filename):
     if ret["name"] == '': 
         # or (ret["education"] == [] and ret["work"] == []):
         raise RuntimeError('NotFoundError')
-
+    # import pdb;pdb.set_trace()
     if ret["education"] == []:
-        ret["education"] = target.cssselect(".pv-top-card-v2-section__school-name")[0].txt
+        ret["education"] = target.cssselect(".pv-top-card-v2-section__school-name")[0].text
 
     if ret["work"] == []:
-        ret["work"] = targeg.cssselect(".pv-top-card-section__headline")[0].txt
+        ret["work"] = target.cssselect(".pv-top-card-section__headline")[0].text
 
+    try:
+        ret["summary"] = target.cssselect("p.pv-top-card-section__summary-text")[0].cssselect("span").text
+    except:
+        pass
     print(ret)
 
     return ret

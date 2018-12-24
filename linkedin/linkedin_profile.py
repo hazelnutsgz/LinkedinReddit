@@ -144,6 +144,12 @@ def extract_information(filename):
         ret["summary"] = target.cssselect("p.pv-top-card-section__summary-text")[0].cssselect("span").text
     except:
         pass
+    # import pdb;pdb.set_trace()
+    try:
+        ret["connections"] = target.cssselect(".pv-top-card-v2-section__connections")[0].text
+    except:
+        pass
+
     print(ret)
 
     return ret

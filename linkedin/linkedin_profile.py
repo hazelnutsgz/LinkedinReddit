@@ -14,6 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import pickle
 import json
+from functools import reduce
 
 # from .. login.linkedin_login import get_driver
 
@@ -141,10 +142,14 @@ def extract_information(filename):
         ret["work"] = target.cssselect(".pv-top-card-section__headline")[0].text
 
     try:
-        ret["summary"] = target.cssselect("p.pv-top-card-section__summary-text")[0].cssselect("span").text
+        ret["summary"] = ""
+        str_lis = target.cssselect(".pv-top-card-section__summary")[0].cssselect("span")
+        for str_item in str_lis:
+            ret["summary"] += str_item.text
     except:
+        # import pdb;pdb.set_trace()
         pass
-    # import pdb;pdb.set_trace()
+    
     try:
         ret["connections"] = target.cssselect(".pv-top-card-v2-section__connections")[0].text
     except:
@@ -153,6 +158,23 @@ def extract_information(filename):
     print(ret)
 
     return ret
+
+
+def clean_json(dic):
+    for item in dic:
+        item['connections'] = item['connections'][11:-9]
+        item['name'] = item['name'][7:-5]
+        if type(item['education']) is str:
+            item['education'] = item['education'][2:-2]
+        else:
+            for education in item['education']:
+                if "年" in education["start"]: 
+                    education["start"] = education["start"][0:-2]
+                if "年" in education["end"]: 
+                    education["end"] = education["end"][0:-2]
+
+    with open("parse.json", 'w') as fp:
+        fp.write(json.dumps(dic, indent=4))
 
 def scrape_information(driver, url):
     name = download_information(driver, url)
@@ -182,6 +204,8 @@ def parse_all_info(directory):
     with open("error.log", 'w') as fp:
         fp.write(json.dumps(error_list))
 
+
+    clean_json(ret)
     with open("parse.json", 'w') as fp:
         fp.write(json.dumps(ret))
 
@@ -192,5 +216,9 @@ if __name__ == '__main__':
     parse_all_info("html")
     # extract_information(os.path.join("html", \
     #             "%E5%A8%81-%E5%88%98-629940132.html"))
-
+    # with open("parse.json", 'r') as fp:
+    #     target = fp.read()
+    # clean_json(target)
+    # with open("parse.json", 'w') as fp:
+    #     fp.write(json.dumps(target))
 

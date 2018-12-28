@@ -10,9 +10,9 @@ sys.path.insert(0,parentdir)
 from login.linkedin_login import *
 
 parser = argparse.ArgumentParser()
-parser.add_argument("name")
-parser.add_argument("start")
-parser.add_argument("end")
+parser.add_argument("name", help='an integer for the accumulator')
+parser.add_argument("start", help='The start index in url.json')
+parser.add_argument("end", help='The end index in url.json')
 args = parser.parse_args()
 
 def func():
@@ -28,12 +28,16 @@ def func():
 	if target is None:
 		print ("Can not find the account")
 		return
+
+	if not os.path.exists(target["position"]):
+		os.mkdir(target["position"])
+		
 	driver = get_driver(target["username"], \
 		target["password"], os.path.join(target["position"], "cookies.pkl") )
 
 	print ("driver got??")
 
-	with open("result_dict.json", "r") as fp:
+	with open("url.json", "r") as fp:
 	    result = json.loads(fp.read())
 
 
@@ -76,7 +80,7 @@ def func():
 
 def clean():
 	name_list = os.listdir("html")
-	with open("result_dict.json", "r") as fp:
+	with open("url.json", "r") as fp:
 		result = json.loads(fp.read())
 	
 	for url in result:
@@ -87,18 +91,18 @@ def clean():
 				result[url] = "no"
 				break
 
-	with open("result_dict.json", "w") as fp:
+	with open("url.json", "w") as fp:
 		fp.write(json.dumps(result))
 
 def transfer():
 	arr = []
-	with open("result_dict.json", "r") as fp:
+	with open("url.json", "r") as fp:
 		result = json.loads(fp.read())
 
 	for (key, val) in result.items():
 		arr.append([key, val])
 
-	with open("result_dict.json", "w") as fp:
+	with open("url.json", "w") as fp:
 		fp.write(json.dumps(arr))
 
 def statistic():
